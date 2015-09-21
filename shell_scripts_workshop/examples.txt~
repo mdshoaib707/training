@@ -1,0 +1,428 @@
+#####################################################
+Three types of "if"
+1. Numeric comparison
+2. String comparison
+3. File comparison
+#####################################################
+File comparison description
+-d file
+Checks if file exists and is a directory
+-e file
+Checks if file exists
+-f file
+Checks if file exists and is a file
+-r file
+Checks if file exists and is readable
+-s file
+Checks if file exists and is not empty
+-w file
+Checks if file exists and is writable
+-x file
+Checks if file exists and is executable
+-O file
+Checks if file exists and is owned by the current user
+-G file
+Checks if file exists and the default group is the same as the current user
+file1 -nt file2
+Checks if file1 is newer than file2
+file1 -ot file2
+Checks if file1 is older than file2
+#####################################################
+#!/bin/bash
+# testing if you can read a file
+pwfile=/etc/shadow
+#
+# first, test if the file exists, and is a file
+if [ -f $pwfile ]
+then
+# now test if you can read it
+if [ -r $pwfile ]
+then
+tail $pwfile
+else
+echo "Sorry, I am unable to read the $pwfile file"
+fi
+else
+echo "Sorry, the file $file does not exist"
+fi
+#####################################################
+#!/bin/bash
+# Testing if a file is empty
+#
+file_name=$HOME/sentinel
+#
+if [ -f $file_name ]
+then
+if [ -s $file_name ]
+then
+echo ''The $file_name file exists and has data in it.''
+echo ''Will not remove this file.''
+#
+else
+echo ''The $file_name file exists, but is empty.''
+echo ''Deleting empty file...''
+rm $file_name
+fi
+else
+echo ''File, $file_name, does not exist.''
+fi
+#
+#####################################################
+#!/bin/bash
+# testing file dates
+#
+if [ test19.sh -nt test18.sh ]
+then
+echo "The test19 file is newer than test18"
+else
+echo "The test18 file is newer than test19"
+fi
+if [ test17.sh -ot test19.sh ]
+then
+echo "The test17 file is older than the test19 file"
+fi
+#####################################################
+#!/bin/bash
+# testing compound comparisons
+#
+if [ -d $HOME ] &&[ -w $HOME/testing ]
+then
+echo "The file exists and you can write to it"
+else
+echo "I cannot write to the file"
+fi
+#####################################################
+#!/bin/bash
+# using double parenthesis
+#
+val1=10
+#
+if (( $val1 ** 2 >90 ))
+then
+(( val2 = $val1 ** 2 ))
+echo "The square of $val1 is $val2"
+fi
+#####################################################
+#!/bin/bash
+# using the case command
+#
+case $USER in
+rich | barbara)
+echo "Welcome, $USER"
+echo "Please enjoy your visit";;
+testing)
+echo "Special testing account";;
+jessica)
+echo "Do not forget to log off when you're done";;
+*)
+echo "Sorry, you are not allowed here";;
+esac
+#####################################################
+#!/bin/bash
+# while command test
+var1=10
+while [ $var1 -gt 0 ]
+do
+echo $var1
+var1=$[ $var1 - 1 ]
+done
+#####################################################
+#!/bin/bash
+# testing a multicommand while loop
+var1=10
+while echo $var1
+[ $var1 -ge 0 ]
+do
+echo "This is inside the loop"
+var1=$[ $var1 - 1 ]
+done
+#####################################################
+until test commands
+do
+other commands
+done
+######################################################
+#!/bin/bash
+# using the until command
+var1=100
+until [ $var1 -eq 0 ]
+do
+echo $var1
+var1=$[ $var1 - 25 ]
+done
+######################################################
+#!/bin/bash
+# nesting for loops
+for (( a = 1; a <= 3; a++ ))
+do
+echo "Starting loop $a:"
+for (( b = 1; b <= 3; b++ ))
+do
+echo "Inside loop: $b"
+done
+done
+#####################################################
+#!/bin/bash
+# placing a for loop inside a while loop
+var1=5
+while [ $var1 -ge 0 ]
+do
+echo "Outer loop: $var1"
+for (( var2 = 1; $var2 <3; var2++ ))
+do
+var3=$[ $var1 * $var2 ]
+echo "Inner loop: $var1 * $var2 = $var3"
+done
+var1=$[ $var1 - 1 ]
+done
+####################################################
+#!/bin/bash
+# placing a for loop inside a while loop
+var1=5
+while [ $var1 -ge 0 ]
+do
+echo "Outer loop: $var1"
+for (( var2 = 1; $var2 <3; var2++ ))
+do
+var3=$[ $var1 * $var2 ]
+echo "Inner loop: $var1 * $var2 = $var3"
+done
+var1=$[ $var1 - 1 ]
+done
+###################################################
+#!/bin/bash
+# using until and while loops
+var1=3
+until [ $var1 -eq 0 ]
+do
+echo "Outer loop: $var1"
+var2=1
+while [ $var2 -lt 5 ]
+do
+var3=$(echo "scale=4; $var1 / $var2"| bc)
+echo "Inner loop: $var1 / $var2 = $var3"
+var2=$[ $var2 + 1 ]
+done
+var1=$[ $var1 - 1 ]
+done
+#################################################
+#!/bin/bash
+# changing the IFS value
+IFS.OLD=$IFS
+IFS=$'\n'
+for entry in $(cat /etc/passwd)
+do
+echo "Values in $entry –"
+IFS=:
+for value1 in $entry
+do
+echo "$value1"
+done
+done
+################################################
+#!/bin/bash
+# breaking out of a for loop
+for var1 in 1 2 3 4 5 6 7 8 9 10
+do
+if [ $var1 -eq 5 ]
+then
+break
+fi
+echo "Iteration number: $var1"
+done
+echo "The for loop is completed"
+###############################################
+#!/bin/bash
+# breaking out of a while loop
+var1=1
+while [ $var1 -lt 10 ]
+do
+if [ $var1 -eq 5 ]
+then
+break
+fi
+echo "Iteration: $var1"
+var1=$[ $var1 + 1 ]
+done
+echo "The while loop is completed"
+##############################################
+#!/bin/bash
+# breaking out of an inner loop
+for (( a = 1; a <4; a++ ))
+do
+echo "Outer loop: $a"
+for (( b = 1; b <100; b++ ))
+do
+if [ $b -eq 5 ]
+then
+break
+fi
+echo "Inner loop: $b"
+done
+done
+#############################################
+#!/bin/bash
+# breaking out of an outer loop
+for (( a = 1; a <4; a++ ))
+do
+echo "Outer loop: $a"
+for (( b = 1; b <100; b++ ))
+do
+if [ $b -gt 4 ]
+then
+break 2
+fi
+echo "Inner loop: $b"
+done
+done
+###########################################
+#!/bin/bash
+# using the continue command
+for (( var1 = 1; var1 <15; var1++ ))
+do
+if [ $var1 -gt 5 ] &&[ $var1 -lt 10 ]
+then
+continue
+fi
+echo "Iteration number: $var1"
+done
+##########################################
+#!/bin/bash
+# continuing an outer loop
+for (( a = 1; a <= 5; a++ ))
+do
+echo "Iteration $a:"
+for (( b = 1; b <3; b++ ))
+do
+if [ $a -gt 2 ] &&[ $a -lt 4 ]
+then
+continue 2
+fi
+var3=$[ $a * $b ]
+echo "The result of $a * $b is $var3"
+done
+done
+##########################################
+#!/bin/bash
+#Details of file folder and transfer output to file
+for file in /home/rich/*
+do
+if [ -d "$file"]
+then
+echo "$file is a directory"
+elif
+echo "$file is a file"
+fi
+done >output.txt
+#########################################
+#!/bin/bash
+# finding files in the PATH
+IFS=:
+for folder in $PATH
+do
+echo "$folder:"
+for file in $folder/*
+do
+if [ -x $file ]
+then
+echo "$file"
+fi
+done
+done
+############## Passing parameters ########
+#!/bin/bash
+# using one command line parameter
+#
+factorial=1
+for (( number = 1; number <= $1 ; number++ ))
+do
+factorial=$[ $factorial * $number ]
+done
+echo The factorial of $1 is $factorial
+#########################################
+#!/bin/bash
+# using a function in a script
+function func1 {
+echo "This is an example of a function"
+}
+count=1
+while [ $count -le 5 ]
+do
+func1
+count=$[ $count + 1 ]
+done
+echo "This is the end of the loop"
+func1
+echo "Now this is the end of the script"
+#######################################
+#!/bin/bash
+# using the echo to return a value
+function dbl {
+read -p "Enter a value: "value
+echo $[ $value * 2 ]
+}
+result=$(dbl)
+echo "The new value is $result"
+######################################
+#!/bin/bash
+# passing parameters to a function
+function addem {
+if [ $# -eq 0 ] || [ $# -gt 2 ]
+then
+echo -1
+elif [ $# -eq 1 ]
+then
+echo $[ $1 + $1 ]
+else
+echo $[ $1 + $2 ]
+fi
+}
+echo -n "Adding 10 and 15: "
+value=$(addem 10 15)
+echo $value
+echo -n "Let's try adding just one number: "
+value=$(addem 10)
+echo $value
+echo -n "Now trying adding no numbers: "
+value=$(addem)
+echo $value
+echo -n "Finally, try adding three numbers: "
+value=$(addem 10 15 20)
+echo $value
+#######################################
+!/bin/bash
+# BASH FUNCTIONS CAN BE DECLARED IN ANY ORDER
+function function_B {
+        echo Function B.
+}
+function function_A {
+        echo $1
+}
+function function_D {
+        echo Function D.
+}
+function function_C {
+        echo $1
+}
+# FUNCTION CALLS
+# Pass parameter to function A
+function_A "Function A."
+function_B
+# Pass parameter to function C
+function_C "Function C."
+function_D 
+#################################################
+#!/bin/bash
+ 
+PS3='Choose one word: ' 
+
+# bash select
+select word in "linux" "bash" "scripting" "tutorial" 
+do
+  echo "The word you have selected is: $word"
+# Break, otherwise endless loop
+  break  
+done
+
+exit 0 
+#################################################
